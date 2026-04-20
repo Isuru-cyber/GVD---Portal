@@ -1,16 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { KPISection } from '../components/dashboard/KPISection';
-import { ChartsSection } from '../components/dashboard/ChartsSection';
 import { RecordsTable } from '../components/dashboard/RecordsTable';
 import { supabase } from '../lib/supabase';
-import { ProductionRecord, DashboardMetrics, PLANTS } from '../types';
-import { Download, RefreshCw, Filter, ExternalLink } from 'lucide-react';
+import { ProductionRecord, PLANTS } from '../types';
+import { RefreshCw, Filter, Download, ArrowLeft } from 'lucide-react';
 import { motion } from 'motion/react';
-import { useNavigate, Link } from 'react-router-dom';
-import { PlantSummaries } from '../components/dashboard/PlantSummaries';
+import { useNavigate } from 'react-router-dom';
 
-export const Dashboard: React.FC = () => {
+export const RecordsDetails: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [records, setRecords] = useState<ProductionRecord[]>([]);
@@ -22,7 +19,6 @@ export const Dashboard: React.FC = () => {
     setLoading(true);
     let query = supabase.from('production').select('*').order('year', { ascending: false }).order('month', { ascending: false });
     
-    // Plant restriction (for Entry Users)
     if (user?.role === 'Entry User' && user.plant) {
       query = query.eq('plant', user.plant);
     } else if (plantFilter !== 'All') {
@@ -35,7 +31,6 @@ export const Dashboard: React.FC = () => {
 
     const { data, error } = await query;
     if (!error && data) {
-      // Category restriction: Zero out restricted categories if not "All"
       const processedData = data.map(record => {
         const restricted = { ...record };
         if (user?.category && user.category !== 'All') {
@@ -59,47 +54,29 @@ export const Dashboard: React.FC = () => {
 
   useEffect(() => {
     fetchRecords();
-
-    // Subscribe to realtime changes
-    const channel = supabase
-      .channel('production-all')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'production' }, () => {
-        fetchRecords();
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
   }, [plantFilter, yearFilter]);
-
-  const metrics = useMemo<DashboardMetrics>(() => {
-    const totalGrn = records.reduce((sum, r) => sum + r.grn, 0);
-    const totalDispatched = records.reduce((sum, r) => sum + r.dispatched, 0);
-    const totalWaste = records.reduce((sum, r) => sum + r.waste, 0);
-    const totalBalance = totalGrn - totalDispatched - totalWaste;
-    const overallUtilization = totalGrn > 0 ? (totalDispatched / totalGrn) * 100 : 0;
-
-    return {
-      totalGrn,
-      totalDispatched,
-      totalWaste,
-      totalBalance,
-      overallUtilization
-    };
-  }, [records]);
 
   const availableYears = useMemo(() => {
     const years = new Set(records.map(r => r.year));
+    // If no records, at least show current year
+    if (years.size === 0) return [new Date().getFullYear()];
     return Array.from(years).sort((a: any, b: any) => b - a);
   }, [records]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold text-slate-800">Production Dashboard</h2>
-          <p className="text-sm text-slate-500">Real-time plant performance overview</p>
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={() => navigate('/')}
+            className="p-2 bg-white text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors shadow-sm"
+          >
+            <ArrowLeft size={18} />
+          </button>
+          <div>
+            <h2 className="text-2xl font-bold text-slate-800">Records Details</h2>
+            <p className="text-sm text-slate-500">Comprehensive list of all entered production data</p>
+          </div>
         </div>
 
         <div className="flex items-center gap-3">
@@ -120,7 +97,7 @@ export const Dashboard: React.FC = () => {
               className="text-sm font-medium text-slate-600 outline-none bg-transparent"
             >
               <option value="All">All Years</option>
-              {availableYears.map(y => <option key={y} value={y}>{y}</option>)}
+              {availableYears.map(y => <option key={y} value={y.toString()}>{y}</option>)}
             </select>
           </div>
 
@@ -133,32 +110,15 @@ export const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      <KPISection metrics={metrics} />
-      
-      <div className="grid grid-cols-1 gap-8">
-        <ChartsSection records={records} />
-        
-        <div className="card">
-          <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-            <h3 className="text-lg font-bold text-slate-800">Detailed Monthly Breakdown (Latest 12)</h3>
-            <div className="flex items-center gap-4">
-              <Link 
-                to="/records-details"
-                className="text-sm font-semibold text-indigo-600 hover:text-indigo-700 flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 rounded-lg transition-colors border border-indigo-100"
-              >
-                <ExternalLink size={16} />
-                View All Details
-              </Link>
-              <button className="text-sm font-semibold text-slate-600 hover:text-slate-700 flex items-center gap-1">
-                <Download size={16} />
-                Export CSV
-              </button>
-            </div>
-          </div>
-          <RecordsTable records={records.slice(0, 12)} />
+      <div className="card">
+        <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+          <h3 className="text-lg font-bold text-slate-800">Full Records History</h3>
+          <button className="text-sm font-semibold text-indigo-600 hover:text-indigo-700 flex items-center gap-1">
+            <Download size={16} />
+            Export Full Log
+          </button>
         </div>
-
-        <PlantSummaries records={records} year={yearFilter} />
+        <RecordsTable records={records} />
       </div>
     </div>
   );

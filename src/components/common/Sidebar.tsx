@@ -36,6 +36,12 @@ export const Sidebar: React.FC = () => {
       show: isAdmin || isEntry
     },
     {
+      title: 'Records Details',
+      icon: BarChart3,
+      path: '/records-details',
+      show: true
+    },
+    {
       title: 'User Management',
       icon: Users,
       path: '/users',

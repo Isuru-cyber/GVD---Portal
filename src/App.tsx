@@ -11,6 +11,7 @@ import { Header } from './components/common/Header';
 import { Sidebar } from './components/common/Sidebar';
 import { Dashboard } from './pages/Dashboard';
 import { DataEntry } from './pages/DataEntry';
+import { RecordsDetails } from './pages/RecordsDetails';
 import { Settings } from './pages/Settings';
 import { ActivityLogs } from './components/settings/ActivityLogs';
 import { UserManagement } from './components/settings/UserManagement';
@@ -48,6 +49,7 @@ const AppContent: React.FC = () => {
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/data-entry" element={<DataEntry />} />
+              <Route path="/records-details" element={<RecordsDetails />} />
               {user.role === 'Admin' && (
                 <>
                   <Route path="/settings" element={<Settings />} />

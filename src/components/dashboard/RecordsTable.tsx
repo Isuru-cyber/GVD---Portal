@@ -31,8 +31,8 @@ export const RecordsTable: React.FC<RecordsTableProps> = ({ records, onEdit, onD
             <th>GRN</th>
             <th>Dispatched</th>
             <th>Waste</th>
-            <th>Balance</th>
-            <th>Utilization %</th>
+            <th>Gap Stock</th>
+            <th>Percentage %</th>
             {showActions && <th className="text-right">Actions</th>}
           </tr>
         </thead>
@@ -45,8 +45,8 @@ export const RecordsTable: React.FC<RecordsTableProps> = ({ records, onEdit, onD
             </tr>
           ) : (
             records.map((record) => {
-              const balance = record.grn - record.dispatched - record.waste;
-              const utilization = record.grn > 0 ? (record.dispatched / record.grn) * 100 : 0;
+              const gapStock = record.grn - record.dispatched - record.waste;
+              const percentage = record.grn > 0 ? ((record.dispatched + record.waste) / record.grn) * 100 : 0;
               
               return (
                 <tr key={record.id}>
@@ -61,12 +61,12 @@ export const RecordsTable: React.FC<RecordsTableProps> = ({ records, onEdit, onD
                   <td className="tabular-nums">{record.grn.toLocaleString()}</td>
                   <td className="tabular-nums">{record.dispatched.toLocaleString()}</td>
                   <td className="tabular-nums">{record.waste.toLocaleString()}</td>
-                  <td className={`tabular-nums font-bold ${balance < 0 ? 'text-rose-600' : 'text-slate-700'}`}>
-                    {balance.toLocaleString()}
+                  <td className={`tabular-nums font-bold ${gapStock < 0 ? 'text-rose-600' : 'text-slate-700'}`}>
+                    {gapStock.toLocaleString()}
                   </td>
                   <td>
-                    <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${getUtilColor(utilization)}`}>
-                      {utilization.toFixed(1)}%
+                    <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${getUtilColor(percentage)}`}>
+                      {percentage.toFixed(1)}%
                     </span>
                   </td>
                   {showActions && (
