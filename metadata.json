@@ -1,0 +1,6 @@
+{
+  "name": "GVD Plant Performance Dashboard",
+  "description": "Real-time industrial plant performance monitoring and data entry system with role-based access control.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
