@@ -1,10 +1,17 @@
--- GVD Plant Performance Dashboard - Supabase Database Schema
--- Run this in your Supabase SQL Editor
+-- GVD Plant Performance Dashboard - Full Supabase Setup Script
+-- Application: GVD Portal
+-- Instructions: Run this script in the Supabase SQL Editor (https://supabase.com/dashboard/project/_/sql)
 
--- 0. Enable necessary extensions
+-- ==========================================
+-- 0. EXTENSIONS
+-- ==========================================
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- 1. Create Users Table
+-- ==========================================
+-- 1. TABLES
+-- ==========================================
+
+-- Users Table: Stores platform users and their role-based permissions
 CREATE TABLE IF NOT EXISTS users (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   username TEXT UNIQUE NOT NULL,
@@ -14,7 +21,7 @@ CREATE TABLE IF NOT EXISTS users (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
--- 2. Create Production Table
+-- Production Table: Stores monthly performance data for each plant
 CREATE TABLE IF NOT EXISTS production (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   plant TEXT NOT NULL,
@@ -23,12 +30,12 @@ CREATE TABLE IF NOT EXISTS production (
   grn NUMERIC DEFAULT 0,
   dispatched NUMERIC DEFAULT 0,
   waste NUMERIC DEFAULT 0,
-  created_by TEXT REFERENCES users(username) ON UPDATE CASCADE,
+  created_by TEXT, -- Stores the username of the creator
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
   UNIQUE(plant, year, month)
 );
 
--- 3. Create Logs Table
+-- Logs Table: Activity feed for audit trails
 CREATE TABLE IF NOT EXISTS logs (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   username TEXT NOT NULL,
@@ -37,8 +44,19 @@ CREATE TABLE IF NOT EXISTS logs (
   timestamp TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
--- 4. Enable Real-time for collections
--- (Check if publication already exists to avoid errors)
+-- ==========================================
+-- 2. SECURITY (RLS)
+-- ==========================================
+-- For rapid prototyping and deployment, we disable RLS. 
+-- In a high-security production environment, you would instead create specific policies.
+ALTER TABLE users DISABLE ROW LEVEL SECURITY;
+ALTER TABLE production DISABLE ROW LEVEL SECURITY;
+ALTER TABLE logs DISABLE ROW LEVEL SECURITY;
+
+-- ==========================================
+-- 3. REAL-TIME EMPOWERMENT
+-- ==========================================
+-- This allows the dashboard to update instantly when data is saved.
 DO $$ 
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_publication WHERE pubname = 'supabase_realtime') THEN
@@ -46,10 +64,14 @@ BEGIN
   END IF;
 END $$;
 
+-- Add relevant tables to the real-time publication
 ALTER PUBLICATION supabase_realtime ADD TABLE production;
 ALTER PUBLICATION supabase_realtime ADD TABLE logs;
 
--- 5. Insert Default Users (using ON CONFLICT to avoid errors on re-run)
+-- ==========================================
+-- 4. SEED DATA (Default Users)
+-- ==========================================
+-- This creates the initial accounts so you can log in immediately.
 INSERT INTO users (username, role, plant, category) 
 VALUES
   ('admin', 'Admin', 'Global', 'All'),

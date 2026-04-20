@@ -51,6 +51,7 @@ export const UserManagement: React.FC = () => {
     
     const submissionData = {
       ...formData,
+      username: formData.username.toLowerCase(),
       plant: formData.role === 'Admin' || formData.role === 'Viewer' ? 'Global' : formData.plant,
       category: (formData.role === 'Admin' || formData.role === 'Viewer') ? 'All' : formData.category
     };
