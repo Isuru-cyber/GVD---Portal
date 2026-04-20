@@ -1,7 +1,11 @@
--- SQL Script for GVD Dashboard Supabase Setup
+-- GVD Plant Performance Dashboard - Supabase Database Schema
+-- Run this in your Supabase SQL Editor
+
+-- 0. Enable necessary extensions
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- 1. Create Users Table
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   username TEXT UNIQUE NOT NULL,
   role TEXT NOT NULL CHECK (role IN ('Admin', 'Entry User', 'Viewer')),
@@ -11,7 +15,7 @@ CREATE TABLE users (
 );
 
 -- 2. Create Production Table
-CREATE TABLE production (
+CREATE TABLE IF NOT EXISTS production (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   plant TEXT NOT NULL,
   year INTEGER NOT NULL,
@@ -25,7 +29,7 @@ CREATE TABLE production (
 );
 
 -- 3. Create Logs Table
-CREATE TABLE logs (
+CREATE TABLE IF NOT EXISTS logs (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   username TEXT NOT NULL,
   action TEXT NOT NULL,
@@ -33,14 +37,28 @@ CREATE TABLE logs (
   timestamp TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
--- 4. Enable Real-time
+-- 4. Enable Real-time for collections
+-- (Check if publication already exists to avoid errors)
+DO $$ 
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_publication WHERE pubname = 'supabase_realtime') THEN
+    CREATE PUBLICATION supabase_realtime;
+  END IF;
+END $$;
+
 ALTER PUBLICATION supabase_realtime ADD TABLE production;
 ALTER PUBLICATION supabase_realtime ADD TABLE logs;
 
--- 5. Insert Default Users
-INSERT INTO users (username, role, plant, category) VALUES
-('admin', 'Admin', 'Global', 'All'),
-('viewer', 'Viewer', 'Global', 'All'),
-('entry_str1_grn', 'Entry User', 'STR 1', 'GRN'),
-('entry_str1_disp', 'Entry User', 'STR 1', 'Dispatched'),
-('entry_str1_waste', 'Entry User', 'STR 1', 'Waste');
+-- 5. Insert Default Users (using ON CONFLICT to avoid errors on re-run)
+INSERT INTO users (username, role, plant, category) 
+VALUES
+  ('admin', 'Admin', 'Global', 'All'),
+  ('viewer', 'Viewer', 'Global', 'All'),
+  ('entry_str1_grn', 'Entry User', 'STR 1', 'GRN'),
+  ('entry_str1_disp', 'Entry User', 'STR 1', 'Dispatched'),
+  ('entry_str1_waste', 'Entry User', 'STR 1', 'Waste')
+ON CONFLICT (username) DO UPDATE 
+SET 
+  role = EXCLUDED.role,
+  plant = EXCLUDED.plant,
+  category = EXCLUDED.category;

@@ -14,13 +14,13 @@ export const RecordForm: React.FC<RecordFormProps> = ({ initialData, onSubmit, i
   const isAdmin = user?.role === 'Admin';
 
   const [formData, setFormData] = useState({
-    plant: user?.plant || PLANTS[0],
+    plant: (user?.plant && user.plant !== 'Global') ? user.plant : PLANTS[0],
     year: new Date().getFullYear(),
     month: new Date().getMonth() + 1,
     grn: 0,
     dispatched: 0,
     waste: 0,
-    category: user?.category || 'All'
+    category: (user?.category && user.category !== 'All') ? user.category : 'All'
   });
 
   useEffect(() => {
@@ -32,10 +32,17 @@ export const RecordForm: React.FC<RecordFormProps> = ({ initialData, onSubmit, i
         grn: initialData.grn,
         dispatched: initialData.dispatched,
         waste: initialData.waste,
-        category: 'All'
+        category: (user?.category && user.category !== 'All') ? user.category : 'All'
       });
+    } else if (user) {
+      // Set default plant for new entry if user plant is 'Global'
+      setFormData(prev => ({
+        ...prev,
+        plant: (user.plant && user.plant !== 'Global') ? user.plant : PLANTS[0],
+        category: (user.category && user.category !== 'All') ? user.category : 'All'
+      }));
     }
-  }, [initialData]);
+  }, [initialData, user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;

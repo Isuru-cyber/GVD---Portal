@@ -5,7 +5,8 @@ import { Modal } from '../components/common/Modal';
 import { supabase } from '../lib/supabase';
 import { ProductionRecord, PLANTS } from '../types';
 import { useAuth } from '../hooks/useAuth';
-import { Plus, Search, FileText } from 'lucide-react';
+import { Plus, Search, FileText, AlertTriangle } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 export const DataEntry: React.FC = () => {
   const { user } = useAuth();
@@ -16,6 +17,9 @@ export const DataEntry: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingRecord, setEditingRecord] = useState<ProductionRecord | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Deletion state
+  const [recordToDelete, setRecordToDelete] = useState<string | null>(null);
 
   const fetchUserRecords = async () => {
     setLoading(true);
@@ -36,10 +40,14 @@ export const DataEntry: React.FC = () => {
     fetchUserRecords();
   }, []);
 
-  const handleCreateOrUpdate = async (formData: Partial<ProductionRecord>) => {
+  const handleCreateOrUpdate = async (formData: any) => {
     setIsSubmitting(true);
+    
+    // Remove 'category' from formData as it's not a column in the production table
+    const { category, ...dataToSave } = formData;
+    
     const payload = {
-      ...formData,
+      ...dataToSave,
       created_by: user?.username || 'system'
     };
 
@@ -47,23 +55,29 @@ export const DataEntry: React.FC = () => {
     if (editingRecord) {
       result = await supabase.from('production').update(payload).eq('id', editingRecord.id);
       
-      // Log action
-      await supabase.from('logs').insert([{
-        username: user?.username || 'system',
-        action: `Updated production record for ${formData.plant} ${formData.month}/${formData.year}`,
-        plant: formData.plant || 'System',
-        timestamp: new Date().toISOString()
-      }]);
+      if (!result.error) {
+        toast.success('Record updated successfully');
+        // Log action
+        await supabase.from('logs').insert([{
+          username: user?.username || 'system',
+          action: `Updated production record for ${formData.plant} ${formData.month}/${formData.year}`,
+          plant: formData.plant || 'System',
+          timestamp: new Date().toISOString()
+        }]);
+      }
     } else {
       result = await supabase.from('production').insert([payload]);
       
-      // Log action
-      await supabase.from('logs').insert([{
-        username: user?.username || 'system',
-        action: `Created production record for ${formData.plant} ${formData.month}/${formData.year}`,
-        plant: formData.plant || 'System',
-        timestamp: new Date().toISOString()
-      }]);
+      if (!result.error) {
+        toast.success('Record saved successfully');
+        // Log action
+        await supabase.from('logs').insert([{
+          username: user?.username || 'system',
+          action: `Created production record for ${formData.plant} ${formData.month}/${formData.year}`,
+          plant: formData.plant || 'System',
+          timestamp: new Date().toISOString()
+        }]);
+      }
     }
 
     if (!result.error) {
@@ -71,26 +85,31 @@ export const DataEntry: React.FC = () => {
       setEditingRecord(null);
       fetchUserRecords();
     } else {
+      toast.error(`Error: ${result.error.message}`);
       console.error(result.error);
     }
     setIsSubmitting(false);
   };
 
-  const handleDelete = async (id: string) => {
-    if (confirm('Are you sure you want to delete this record?')) {
-      const record = records.find(r => r.id === id);
-      const { error } = await supabase.from('production').delete().eq('id', id);
-      if (!error) {
-        // Log action
-        await supabase.from('logs').insert([{
-          username: user?.username || 'system',
-          action: `Deleted production record for ${record?.plant} ${record?.month}/${record?.year}`,
-          plant: record?.plant || 'System',
-          timestamp: new Date().toISOString()
-        }]);
-        fetchUserRecords();
-      }
+  const handleDelete = async () => {
+    if (!recordToDelete) return;
+
+    const record = records.find(r => r.id === recordToDelete);
+    const { error } = await supabase.from('production').delete().eq('id', recordToDelete);
+    if (!error) {
+      toast.success('Record deleted successfully');
+      // Log action
+      await supabase.from('logs').insert([{
+        username: user?.username || 'system',
+        action: `Deleted production record for ${record?.plant} ${record?.month}/${record?.year}`,
+        plant: record?.plant || 'System',
+        timestamp: new Date().toISOString()
+      }]);
+      fetchUserRecords();
+    } else {
+      toast.error(error.message);
     }
+    setRecordToDelete(null);
   };
 
   const handleEdit = (record: ProductionRecord) => {
@@ -145,9 +164,42 @@ export const DataEntry: React.FC = () => {
         <RecordsTable 
           records={records} 
           onEdit={handleEdit} 
-          onDelete={handleDelete} 
+          onDelete={(id) => setRecordToDelete(id)} 
         />
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={!!recordToDelete}
+        onClose={() => setRecordToDelete(null)}
+        title="Confirm Deletion"
+      >
+        <div className="text-center space-y-4">
+          <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto">
+            <AlertTriangle size={32} />
+          </div>
+          <div>
+            <h4 className="text-lg font-bold text-slate-800">Delete Production Record?</h4>
+            <p className="text-slate-500 mt-1">
+              Are you sure you want to delete this production entry? This action is permanent.
+            </p>
+          </div>
+          <div className="flex gap-3 pt-2">
+            <button
+              onClick={() => setRecordToDelete(null)}
+              className="btn flex-1 border border-slate-200 text-slate-600 hover:bg-slate-50"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleDelete}
+              className="btn flex-1 bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-100"
+            >
+              Confirm Delete
+            </button>
+          </div>
+        </div>
+      </Modal>
 
       <Modal
         isOpen={isModalOpen}

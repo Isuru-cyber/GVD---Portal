@@ -19,6 +19,8 @@ export const RecordsTable: React.FC<RecordsTableProps> = ({ records, onEdit, onD
     return 'text-rose-600 bg-rose-50';
   };
 
+  const showActions = !!onEdit || !!onDelete;
+
   return (
     <div className="table-container mt-8 shadow-sm">
       <table className="data-table">
@@ -31,13 +33,13 @@ export const RecordsTable: React.FC<RecordsTableProps> = ({ records, onEdit, onD
             <th>Waste</th>
             <th>Balance</th>
             <th>Utilization %</th>
-            {isAdmin && <th className="text-right">Actions</th>}
+            {showActions && <th className="text-right">Actions</th>}
           </tr>
         </thead>
         <tbody>
           {records.length === 0 ? (
             <tr>
-              <td colSpan={isAdmin ? 8 : 7} className="text-center py-12 text-slate-400 italic">
+              <td colSpan={showActions ? 8 : 7} className="text-center py-12 text-slate-400 italic">
                 No records found.
               </td>
             </tr>
@@ -67,21 +69,25 @@ export const RecordsTable: React.FC<RecordsTableProps> = ({ records, onEdit, onD
                       {utilization.toFixed(1)}%
                     </span>
                   </td>
-                  {isAdmin && (
+                  {showActions && (
                     <td className="text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <button 
-                          onClick={() => onEdit?.(record)}
-                          className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
-                        >
-                          <Edit size={16} />
-                        </button>
-                        <button 
-                          onClick={() => onDelete?.(record.id)}
-                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all"
-                        >
-                          <Trash2 size={16} />
-                        </button>
+                        {onEdit && (
+                          <button 
+                            onClick={() => onEdit(record)}
+                            className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+                          >
+                            <Edit size={16} />
+                          </button>
+                        )}
+                        {onDelete && (
+                          <button 
+                            onClick={() => onDelete(record.id)}
+                            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-red-50 rounded-lg transition-all"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        )}
                       </div>
                     </td>
                   )}

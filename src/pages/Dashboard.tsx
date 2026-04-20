@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useAuth } from '../hooks/useAuth';
 import { KPISection } from '../components/dashboard/KPISection';
 import { ChartsSection } from '../components/dashboard/ChartsSection';
 import { RecordsTable } from '../components/dashboard/RecordsTable';
@@ -8,6 +9,7 @@ import { RefreshCw, Filter, Download } from 'lucide-react';
 import { motion } from 'motion/react';
 
 export const Dashboard: React.FC = () => {
+  const { user } = useAuth();
   const [records, setRecords] = useState<ProductionRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [plantFilter, setPlantFilter] = useState('All');
@@ -17,7 +19,10 @@ export const Dashboard: React.FC = () => {
     setLoading(true);
     let query = supabase.from('production').select('*').order('year', { ascending: false }).order('month', { ascending: false });
     
-    if (plantFilter !== 'All') {
+    // Plant restriction (for Entry Users)
+    if (user?.role === 'Entry User' && user.plant) {
+      query = query.eq('plant', user.plant);
+    } else if (plantFilter !== 'All') {
       query = query.eq('plant', plantFilter);
     }
     
@@ -27,7 +32,24 @@ export const Dashboard: React.FC = () => {
 
     const { data, error } = await query;
     if (!error && data) {
-      setRecords(data);
+      // Category restriction: Zero out restricted categories if not "All"
+      const processedData = data.map(record => {
+        const restricted = { ...record };
+        if (user?.category && user.category !== 'All') {
+          if (user.category === 'GRN') {
+            restricted.dispatched = 0;
+            restricted.waste = 0;
+          } else if (user.category === 'Dispatched') {
+            restricted.grn = 0;
+            restricted.waste = 0;
+          } else if (user.category === 'Waste') {
+            restricted.grn = 0;
+            restricted.dispatched = 0;
+          }
+        }
+        return restricted;
+      });
+      setRecords(processedData);
     }
     setLoading(false);
   };
