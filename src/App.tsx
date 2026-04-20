@@ -15,6 +15,7 @@ import { Settings } from './pages/Settings';
 import { ActivityLogs } from './components/settings/ActivityLogs';
 import { UserManagement } from './components/settings/UserManagement';
 import { Toaster } from 'react-hot-toast';
+import { motion } from 'motion/react';
 
 const AppContent: React.FC = () => {
   const { user, loading } = useAuth();
@@ -32,41 +33,46 @@ const AppContent: React.FC = () => {
   }
 
   return (
-    <Router>
-      <div className="min-h-screen bg-slate-50 flex flex-col">
-        <Toaster position="top-right" />
-        <Header />
-        <div className="flex flex-1 pt-0">
-          <Sidebar />
-          <main className="flex-1 ml-64 p-8 animate-in fade-in duration-500">
-            <div className="max-w-7xl mx-auto">
-              <Routes>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/data-entry" element={<DataEntry />} />
-                {user.role === 'Admin' && (
-                  <>
-                    <Route path="/settings" element={<Settings />} />
-                    <Route path="/users" element={<UserManagement />} />
-                    <Route path="/logs" element={<ActivityLogs />} />
-                  </>
-                )}
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-            </div>
-          </main>
-        </div>
-        <footer className="ml-64 py-6 px-8 border-t border-slate-200 text-center text-slate-400 text-[10px] font-bold uppercase tracking-widest bg-white">
-          GVD Opex Management System &copy; 2026 | Proprietary & Confidential
-        </footer>
+    <div className="min-h-screen bg-slate-50 flex flex-col">
+      <Toaster position="top-right" />
+      <Header />
+      <div className="flex flex-1 pt-0">
+        <Sidebar />
+        <main className="flex-1 ml-64 p-8 overflow-y-auto">
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="max-w-7xl mx-auto"
+          >
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/data-entry" element={<DataEntry />} />
+              {user.role === 'Admin' && (
+                <>
+                  <Route path="/settings" element={<Settings />} />
+                  <Route path="/users" element={<UserManagement />} />
+                  <Route path="/logs" element={<ActivityLogs />} />
+                </>
+              )}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </motion.div>
+        </main>
       </div>
-    </Router>
+      <footer className="ml-64 py-6 px-8 border-t border-slate-200 text-center text-slate-400 text-[10px] font-bold uppercase tracking-widest bg-white">
+        GVD Opex Management System &copy; 2026 | Proprietary & Confidential
+      </footer>
+    </div>
   );
 };
 
 export default function App() {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <Router>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </Router>
   );
 }
