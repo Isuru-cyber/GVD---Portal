@@ -142,7 +142,7 @@ export const DataEntry: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-slate-800">Production Data Entry</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-800"> Data Entry</h2>
           <p className="text-[10px] sm:text-sm text-slate-500">Manage plant production values</p>
         </div>
 
