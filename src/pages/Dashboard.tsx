@@ -9,6 +9,7 @@ import { Download, RefreshCw, Filter, ExternalLink } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useNavigate, Link } from 'react-router-dom';
 import { PlantSummaries } from '../components/dashboard/PlantSummaries';
+import { MissingEntries } from '../components/dashboard/MissingEntries';
 
 export const Dashboard: React.FC = () => {
   const { user } = useAuth();
@@ -16,7 +17,8 @@ export const Dashboard: React.FC = () => {
   const [records, setRecords] = useState<ProductionRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [plantFilter, setPlantFilter] = useState('All');
-  const [yearFilter, setYearFilter] = useState('All');
+  const [yearFilter, setYearFilter] = useState(new Date().getFullYear().toString());
+  const [availableYears, setAvailableYears] = useState<number[]>([new Date().getFullYear()]);
 
   const fetchRecords = async () => {
     setLoading(true);
@@ -57,7 +59,17 @@ export const Dashboard: React.FC = () => {
     setLoading(false);
   };
 
+  const fetchAvailableYears = async () => {
+    const { data } = await supabase.from('production').select('year');
+    if (data) {
+      const years = new Set<number>(data.map(r => r.year));
+      years.add(new Date().getFullYear());
+      setAvailableYears(Array.from(years).sort((a, b) => b - a));
+    }
+  };
+
   useEffect(() => {
+    fetchAvailableYears();
     fetchRecords();
 
     // Subscribe to realtime changes
@@ -89,11 +101,6 @@ export const Dashboard: React.FC = () => {
     };
   }, [records]);
 
-  const availableYears = useMemo(() => {
-    const years = new Set(records.map(r => r.year));
-    return Array.from(years).sort((a: any, b: any) => b - a);
-  }, [records]);
-
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -119,7 +126,6 @@ export const Dashboard: React.FC = () => {
               onChange={(e) => setYearFilter(e.target.value)}
               className="text-sm font-medium text-slate-600 outline-none bg-transparent"
             >
-              <option value="All">All Years</option>
               {availableYears.map(y => <option key={y} value={y}>{y}</option>)}
             </select>
           </div>
@@ -159,6 +165,7 @@ export const Dashboard: React.FC = () => {
         </div>
 
         <PlantSummaries records={records} year={yearFilter} />
+        <MissingEntries records={records} year={yearFilter} />
       </div>
     </div>
   );

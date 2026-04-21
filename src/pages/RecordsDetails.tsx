@@ -13,7 +13,8 @@ export const RecordsDetails: React.FC = () => {
   const [records, setRecords] = useState<ProductionRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [plantFilter, setPlantFilter] = useState('All');
-  const [yearFilter, setYearFilter] = useState('All');
+  const [yearFilter, setYearFilter] = useState(new Date().getFullYear().toString());
+  const [availableYears, setAvailableYears] = useState<number[]>([new Date().getFullYear()]);
 
   const fetchRecords = async () => {
     setLoading(true);
@@ -52,16 +53,19 @@ export const RecordsDetails: React.FC = () => {
     setLoading(false);
   };
 
+  const fetchAvailableYears = async () => {
+    const { data } = await supabase.from('production').select('year');
+    if (data) {
+      const years = new Set<number>(data.map(r => r.year));
+      years.add(new Date().getFullYear());
+      setAvailableYears(Array.from(years).sort((a, b) => b - a));
+    }
+  };
+
   useEffect(() => {
+    fetchAvailableYears();
     fetchRecords();
   }, [plantFilter, yearFilter]);
-
-  const availableYears = useMemo(() => {
-    const years = new Set(records.map(r => r.year));
-    // If no records, at least show current year
-    if (years.size === 0) return [new Date().getFullYear()];
-    return Array.from(years).sort((a: any, b: any) => b - a);
-  }, [records]);
 
   const handleExportCSV = () => {
     if (records.length === 0) return;
@@ -129,7 +133,6 @@ export const RecordsDetails: React.FC = () => {
               onChange={(e) => setYearFilter(e.target.value)}
               className="text-sm font-medium text-slate-600 outline-none bg-transparent"
             >
-              <option value="All">All Years</option>
               {availableYears.map(y => <option key={y} value={y.toString()}>{y}</option>)}
             </select>
           </div>

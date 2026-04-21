@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { ProductionRecord, PLANTS, MONTHS, CATEGORIES } from '../../types';
 import { Save, AlertCircle } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
 
 interface RecordFormProps {
   initialData?: ProductionRecord | null;
@@ -22,6 +23,45 @@ export const RecordForm: React.FC<RecordFormProps> = ({ initialData, onSubmit, i
     waste: 0,
     category: (user?.category && user.category !== 'All') ? user.category : 'All'
   });
+
+  const [isChecking, setIsChecking] = useState(false);
+
+  useEffect(() => {
+    const fetchExisting = async () => {
+      if (initialData) return;
+      
+      setIsChecking(true);
+      const { data, error } = await supabase
+        .from('production')
+        .select('*')
+        .eq('plant', formData.plant)
+        .eq('year', formData.year)
+        .eq('month', formData.month)
+        .single();
+
+      if (!error && data) {
+        setFormData(prev => ({
+          ...prev,
+          grn: data.grn,
+          dispatched: data.dispatched,
+          waste: data.waste
+        }));
+        // We could also notify the user here that we found an existing record
+      } else {
+        // Reset to 0 if no record found and we aren't editing a specific record
+        setFormData(prev => ({
+          ...prev,
+          grn: 0,
+          dispatched: 0,
+          waste: 0
+        }));
+      }
+      setIsChecking(false);
+    };
+
+    const timer = setTimeout(fetchExisting, 500);
+    return () => clearTimeout(timer);
+  }, [formData.plant, formData.year, formData.month, initialData]);
 
   useEffect(() => {
     if (initialData) {
@@ -63,6 +103,13 @@ export const RecordForm: React.FC<RecordFormProps> = ({ initialData, onSubmit, i
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {isChecking && (
+        <div className="bg-indigo-50 p-2 rounded-lg flex items-center justify-center gap-2 text-indigo-600 text-[10px] font-bold animate-pulse">
+          <div className="w-2 h-2 bg-indigo-600 rounded-full animate-bounce" />
+          Syncing existing plant data...
+        </div>
+      )}
+      
       <div className="grid grid-cols-2 gap-4">
         <div className="form-group">
           <label className="text-sm font-semibold text-slate-700">Year</label>
@@ -163,7 +210,7 @@ export const RecordForm: React.FC<RecordFormProps> = ({ initialData, onSubmit, i
         <div className="flex justify-between items-center mt-2">
           <span className="text-sm font-medium text-slate-600">Utilization %</span>
           <span className="text-lg font-bold text-indigo-600">
-            {formData.grn > 0 ? ((formData.dispatched / formData.grn) * 100).toFixed(1) : '0.0'}%
+            {formData.grn > 0 ? (((formData.dispatched + formData.waste) / formData.grn) * 100).toFixed(2) : '0.00'}%
           </span>
         </div>
       </div>

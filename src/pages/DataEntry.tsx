@@ -66,14 +66,18 @@ export const DataEntry: React.FC = () => {
         }]);
       }
     } else {
-      result = await supabase.from('production').insert([payload]);
+      // Use upsert to prevent duplicate key errors. onConflict specifies the unique constraint columns.
+      result = await supabase.from('production').upsert(payload, { 
+        onConflict: 'plant,year,month',
+        ignoreDuplicates: false 
+      });
       
       if (!result.error) {
         toast.success('Record saved successfully');
         // Log action
         await supabase.from('logs').insert([{
           username: user?.username || 'system',
-          action: `Created production record for ${formData.plant} ${formData.month}/${formData.year}`,
+          action: `Saved production record for ${formData.plant} ${formData.month}/${formData.year}`,
           plant: formData.plant || 'System',
           timestamp: new Date().toISOString()
         }]);
