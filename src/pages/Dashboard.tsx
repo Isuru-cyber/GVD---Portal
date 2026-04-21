@@ -141,22 +141,24 @@ export const Dashboard: React.FC = () => {
 
       <KPISection metrics={metrics} />
       
-      <div className="grid grid-cols-1 gap-8">
-        <ChartsSection records={records} />
+      <div className="grid grid-cols-1 gap-6 sm:gap-8">
+        <div className="hidden lg:block">
+          <ChartsSection records={records} />
+        </div>
         
-        <div className="card">
-          <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-            <h3 className="text-lg font-bold text-slate-800">Detailed Monthly Breakdown (Latest 12)</h3>
-            <div className="flex items-center gap-4">
+        <div className="card overflow-hidden">
+          <div className="p-4 sm:p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <h3 className="text-base sm:text-lg font-bold text-slate-800">Detailed Monthly Breakdown (Latest 12)</h3>
+            <div className="flex items-center gap-2 sm:gap-4">
               <Link 
                 to="/records-details"
-                className="text-sm font-semibold text-indigo-600 hover:text-indigo-700 flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 rounded-lg transition-colors border border-indigo-100"
+                className="text-xs sm:text-sm font-semibold text-indigo-600 hover:text-indigo-700 flex items-center gap-1.5 px-2.5 py-1.5 bg-indigo-50 rounded-lg transition-colors border border-indigo-100"
               >
-                <ExternalLink size={16} />
+                <ExternalLink size={14} className="sm:w-4 sm:h-4" />
                 View All Details
               </Link>
-              <button className="text-sm font-semibold text-slate-600 hover:text-slate-700 flex items-center gap-1">
-                <Download size={16} />
+              <button className="text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-700 flex items-center gap-1 px-2.5 py-1.5 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
+                <Download size={14} className="sm:w-4 sm:h-4" />
                 Export CSV
               </button>
             </div>

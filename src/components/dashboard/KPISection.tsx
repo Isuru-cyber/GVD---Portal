@@ -58,23 +58,23 @@ export const KPISection: React.FC<KPISectionProps> = ({ metrics }) => {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
       {kpis.map((kpi, index) => (
         <motion.div
           key={kpi.title}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: index * 0.1 }}
-          className={`bg-white p-6 rounded-2xl border ${kpi.border} shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow`}
+          className={`bg-white p-4 sm:p-6 rounded-2xl border ${kpi.border} shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow`}
         >
           <div className="relative z-10 flex flex-col items-center text-center">
-            <div className={`w-12 h-12 ${kpi.bg} ${kpi.color} rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110`}>
-              <kpi.icon size={24} />
+            <div className={`w-10 h-10 sm:w-12 sm:h-12 ${kpi.bg} ${kpi.color} rounded-xl flex items-center justify-center mb-3 sm:mb-4 transition-transform group-hover:scale-110`}>
+              <kpi.icon size={20} className="sm:w-6 sm:h-6" />
             </div>
-            <p className="text-sm font-medium text-slate-500">{kpi.title}</p>
-            <p className={`text-2xl font-bold mt-1 ${kpi.color}`}>{kpi.value}</p>
+            <p className="text-xs sm:text-sm font-medium text-slate-500">{kpi.title}</p>
+            <p className={`text-xl sm:text-2xl font-bold mt-1 ${kpi.color}`}>{kpi.value}</p>
           </div>
-          <div className={`absolute -right-4 -bottom-4 ${kpi.bg} w-24 h-24 rounded-full opacity-20 pointer-events-none group-hover:scale-125 transition-transform`} />
+          <div className={`absolute -right-4 -bottom-4 ${kpi.bg} w-16 h-16 sm:w-24 sm:h-24 rounded-full opacity-20 pointer-events-none group-hover:scale-125 transition-transform`} />
         </motion.div>
       ))}
     </div>

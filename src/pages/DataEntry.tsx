@@ -142,8 +142,8 @@ export const DataEntry: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-800">Production Data Entry</h2>
-          <p className="text-sm text-slate-500">Manage plant production values</p>
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-800">Production Data Entry</h2>
+          <p className="text-[10px] sm:text-sm text-slate-500">Manage plant production values</p>
         </div>
 
         <button
@@ -151,22 +151,22 @@ export const DataEntry: React.FC = () => {
             setEditingRecord(null);
             setIsModalOpen(true);
           }}
-          className="btn btn-primary"
+          className="btn btn-primary self-start sm:self-auto text-xs sm:text-sm py-2 sm:py-2.5 px-4 sm:px-6"
         >
-          <Plus size={18} />
+          <Plus size={16} className="sm:w-[18px] sm:h-[18px]" />
           Add New Entry
         </button>
       </div>
 
-      <div className="card">
-        <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-          <h3 className="text-lg font-bold text-slate-800">Your Recent Records</h3>
-          <div className="relative w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+      <div className="card overflow-hidden">
+        <div className="p-4 sm:p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <h3 className="text-base sm:text-lg font-bold text-slate-800">Your Recent Records</h3>
+          <div className="relative w-full sm:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
             <input 
               type="text" 
               placeholder="Filter by year or month..." 
-              className="input pl-10 h-10 text-xs" 
+              className="input pl-10 h-9 sm:h-10 text-[10px] sm:text-xs" 
             />
           </div>
         </div>

@@ -55,32 +55,32 @@ export const MissingEntries: React.FC<MissingEntriesProps> = ({ records, year })
           ACTION REQUIRED
         </div>
       </div>
-      <div className="overflow-x-auto">
-        <table className="w-full text-xs text-left border-collapse">
-          <thead className="bg-slate-50 text-slate-600 font-bold uppercase text-[10px]">
-            <tr>
-              <th className="px-6 py-3 border-r">Month</th>
-              <th className="px-6 py-3 border-r">Plant</th>
-              <th className="px-6 py-3">Category (Missing Data)</th>
+      <div className="overflow-x-auto scrollbar-hide">
+        <table className="w-full text-[10px] sm:text-xs text-left border-collapse">
+          <thead className="bg-slate-50 text-slate-600 font-bold uppercase text-[9px] sm:text-[10px]">
+            <tr className="whitespace-nowrap">
+              <th className="px-4 sm:px-6 py-3 border-r">Month</th>
+              <th className="px-4 sm:px-6 py-3 border-r">Plant</th>
+              <th className="px-4 sm:px-6 py-3">Category (Missing Data)</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-slate-100 italic">
             {missingData.map((item, idx) => (
-              <tr key={idx} className="hover:bg-rose-50/30 transition-colors group">
-                <td className="px-6 py-3 border-r font-semibold text-slate-600">
+              <tr key={idx} className="hover:bg-rose-50/30 transition-colors group whitespace-nowrap">
+                <td className="px-4 sm:px-6 py-2.5 border-r font-semibold text-slate-600">
                   <div className="flex items-center gap-2">
-                    <Clock size={12} className="text-slate-400" />
+                    <Clock size={10} className="sm:w-3 sm:h-3 text-slate-400" />
                     {item.month}
                   </div>
                 </td>
-                <td className="px-6 py-3 border-r">
-                   <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-bold text-[10px]">
+                <td className="px-4 sm:px-6 py-2.5 border-r text-center">
+                   <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 font-bold text-[9px] sm:text-[10px]">
                      {item.plant}
                    </span>
                 </td>
-                <td className="px-6 py-3">
+                <td className="px-4 sm:px-6 py-2.5">
                   <span className="flex items-center gap-1.5 text-rose-600 font-extrabold uppercase">
-                    <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+                    <div className="w-1 h-1 rounded-full bg-rose-500 animate-pulse" />
                     {item.category} Details Missing
                   </span>
                 </td>

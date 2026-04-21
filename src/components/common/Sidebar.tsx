@@ -16,7 +16,12 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const Sidebar: React.FC = () => {
+interface SidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const { user } = useAuth();
   const isAdmin = user?.role === 'Admin';
   const isViewer = user?.role === 'Viewer';
@@ -62,43 +67,59 @@ export const Sidebar: React.FC = () => {
   ];
 
   return (
-    <aside className="w-64 bg-slate-900 border-r border-slate-800 text-slate-400 flex flex-col fixed h-[calc(100vh-64px)] top-16 transition-all duration-300">
-      <nav className="flex-1 px-4 py-6 space-y-2">
-        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-4 mb-4">
-          General
-        </p>
-        {menuItems.filter(item => item.show).map((item) => (
-          <NavLink
-            key={item.path}
-            to={item.path}
-            className={({ isActive }) => cn(
-              "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group",
-              isActive 
-                ? "bg-indigo-600 text-white shadow-lg shadow-indigo-900/20" 
-                : "hover:bg-slate-800 hover:text-slate-200"
-            )}
-          >
-            {({ isActive }) => (
-              <>
-                <item.icon size={20} className={cn(
-                  "transition-transform duration-200 group-hover:scale-110",
-                  isActive ? "text-white" : "text-slate-500"
-                )} />
-                <span className="font-medium text-sm">{item.title}</span>
-              </>
-            )}
-          </NavLink>
-        ))}
-      </nav>
+    <>
+      {/* Mobile Overlay */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 lg:hidden"
+          onClick={onClose}
+        />
+      )}
 
-      <div className="p-6">
-        <div className="bg-slate-800/50 rounded-2xl p-4 border border-slate-700/50">
-          <p className="text-xs text-slate-400 font-medium">Current Plant</p>
-          <p className="text-sm font-bold text-white mt-1">
-            {user?.role === 'Admin' ? 'Global Admin' : user?.plant || 'N/A'}
+      <aside className={cn(
+        "w-64 bg-slate-900 border-r border-slate-800 text-slate-400 flex flex-col fixed h-[calc(100vh-64px)] top-16 z-50 transition-all duration-300",
+        isOpen ? "left-0" : "-left-64"
+      )}>
+        <nav className="flex-1 px-4 py-6 space-y-1">
+          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-4 mb-4">
+            General
           </p>
+          {menuItems.filter(item => item.show).map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              onClick={() => {
+                if (window.innerWidth < 1024) onClose();
+              }}
+              className={({ isActive }) => cn(
+                "flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 group text-sm",
+                isActive 
+                  ? "bg-indigo-600 text-white shadow-lg shadow-indigo-900/20" 
+                  : "hover:bg-slate-800 hover:text-slate-200"
+              )}
+            >
+              {({ isActive }) => (
+                <>
+                  <item.icon size={18} className={cn(
+                    "transition-transform duration-200 group-hover:scale-110",
+                    isActive ? "text-white" : "text-slate-500"
+                  )} />
+                  <span className="font-medium">{item.title}</span>
+                </>
+              )}
+            </NavLink>
+          ))}
+        </nav>
+
+        <div className="p-4">
+          <div className="bg-slate-800/50 rounded-2xl p-3 border border-slate-700/50">
+            <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Current Plant</p>
+            <p className="text-xs font-bold text-white mt-1 truncate">
+              {user?.role === 'Admin' ? 'Global Admin' : user?.plant || 'N/A'}
+            </p>
+          </div>
         </div>
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 };

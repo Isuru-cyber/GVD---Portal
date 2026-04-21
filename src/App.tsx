@@ -17,9 +17,16 @@ import { ActivityLogs } from './components/settings/ActivityLogs';
 import { UserManagement } from './components/settings/UserManagement';
 import { Toaster } from 'react-hot-toast';
 import { motion } from 'motion/react';
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
 
 const AppContent: React.FC = () => {
   const { user, loading } = useAuth();
+  const [isSidebarOpen, setIsSidebarOpen] = React.useState(window.innerWidth >= 1024);
 
   if (loading) {
     return (
@@ -36,10 +43,13 @@ const AppContent: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
       <Toaster position="top-right" />
-      <Header />
-      <div className="flex flex-1 pt-0">
-        <Sidebar />
-        <main className="flex-1 ml-64 p-8 overflow-y-auto">
+      <Header onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
+      <div className="flex flex-1 pt-0 relative">
+        <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+        <main className={cn(
+          "flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto transition-all duration-300",
+          isSidebarOpen ? "lg:ml-64" : "lg:ml-0"
+        )}>
           <motion.div 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -62,7 +72,10 @@ const AppContent: React.FC = () => {
           </motion.div>
         </main>
       </div>
-      <footer className="ml-64 py-6 px-8 border-t border-slate-200 text-center text-slate-400 text-[11px] font-semibold tracking-wide bg-white">
+      <footer className={cn(
+        "py-4 sm:py-6 px-4 sm:px-8 border-t border-slate-200 text-center text-slate-400 text-[9px] sm:text-[11px] font-semibold tracking-wide bg-white uppercase transition-all duration-300",
+        isSidebarOpen ? "lg:ml-64" : "lg:ml-0"
+      )}>
         GVD Management System &copy; 2026 STR Commercial Department
       </footer>
     </div>

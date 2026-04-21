@@ -103,35 +103,35 @@ export const RecordsDetails: React.FC = () => {
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 sm:gap-4">
           <button 
             onClick={() => navigate('/')}
-            className="p-2 bg-white text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors shadow-sm"
+            className="p-1.5 sm:p-2 bg-white text-slate-600 border border-slate-200 rounded-lg sm:rounded-xl hover:bg-slate-50 transition-colors shadow-sm"
           >
-            <ArrowLeft size={18} />
+            <ArrowLeft size={16} className="sm:w-[18px] sm:h-[18px]" />
           </button>
-          <div>
-            <h2 className="text-2xl font-bold text-slate-800">Records Details</h2>
-            <p className="text-sm text-slate-500">Comprehensive list of all entered production data</p>
+          <div className="min-w-0">
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-800 truncate">Records Details</h2>
+            <p className="text-[10px] sm:text-sm text-slate-500 truncate">Comprehensive list of production data</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-xl border border-slate-200 shadow-sm">
-            <Filter size={16} className="text-slate-400" />
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-2 bg-white px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg sm:rounded-xl border border-slate-200 shadow-sm overflow-hidden min-w-0 flex-1 sm:flex-none">
+            <Filter size={14} className="text-slate-400 shrink-0" />
             <select 
               value={plantFilter} 
               onChange={(e) => setPlantFilter(e.target.value)}
-              className="text-sm font-medium text-slate-600 outline-none bg-transparent"
+              className="text-[10px] sm:text-sm font-medium text-slate-600 outline-none bg-transparent min-w-0 truncate"
             >
               <option value="All">All Plants</option>
               {PLANTS.map(p => <option key={p} value={p}>{p}</option>)}
             </select>
-            <div className="w-[1px] h-4 bg-slate-200 mx-1" />
+            <div className="w-[1px] h-3 sm:h-4 bg-slate-200 shrink-0" />
             <select
               value={yearFilter}
               onChange={(e) => setYearFilter(e.target.value)}
-              className="text-sm font-medium text-slate-600 outline-none bg-transparent"
+              className="text-[10px] sm:text-sm font-medium text-slate-600 outline-none bg-transparent shrink-0"
             >
               {availableYears.map(y => <option key={y} value={y.toString()}>{y}</option>)}
             </select>
@@ -139,21 +139,21 @@ export const RecordsDetails: React.FC = () => {
 
           <button 
             onClick={fetchRecords}
-            className="p-2.5 bg-white text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors shadow-sm"
+            className="p-2 sm:p-2.5 bg-white text-slate-600 border border-slate-200 rounded-lg sm:rounded-xl hover:bg-slate-50 transition-colors shadow-sm shrink-0"
           >
-            <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
+            <RefreshCw size={16} className={loading ? 'animate-spin sm:w-[18px] sm:h-[18px]' : 'sm:w-[18px] sm:h-[18px]'} />
           </button>
         </div>
       </div>
 
-      <div className="card">
-        <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-          <h3 className="text-lg font-bold text-slate-800">Your Recent Records</h3>
+      <div className="card overflow-hidden">
+        <div className="p-4 sm:p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <h3 className="text-base sm:text-lg font-bold text-slate-800">Your Recent Records</h3>
           <button 
             onClick={handleExportCSV}
-            className="text-sm font-semibold text-indigo-600 hover:text-indigo-700 flex items-center gap-1"
+            className="text-xs sm:text-sm font-semibold text-indigo-600 hover:text-indigo-700 flex items-center gap-1.5 bg-indigo-50 px-3 py-1.5 rounded-lg border border-indigo-100 transition-colors self-start sm:self-auto"
           >
-            <Download size={16} />
+            <Download size={14} className="sm:w-4 sm:h-4" />
             Export Full Log (CSV)
           </button>
         </div>
