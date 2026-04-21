@@ -41,7 +41,7 @@ export const Login: React.FC = () => {
             G
           </div>
           <h1 className="text-2xl font-bold tracking-tight">GVD Portal</h1>
-          <p className="text-indigo-100 mt-2 text-sm">Industrial Production Monitoring System</p>
+          <p className="text-indigo-100 mt-2 text-sm"> Inventory Movement Monitoring System </p>
           
           <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-white rounded-full flex items-center justify-center text-indigo-600 shadow-lg border-4 border-slate-50">
             <LogIn size={20} />
@@ -82,7 +82,7 @@ export const Login: React.FC = () => {
       </motion.div>
       
       <p className="text-slate-400 text-[10px] mt-8 uppercase tracking-[0.2em] font-bold">
-        Powered by GVD Operational Excellence © 2026
+        Powered by STR Commrecial Department © 2026
       </p>
     </div>
   );
