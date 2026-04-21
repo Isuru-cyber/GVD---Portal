@@ -25,13 +25,30 @@ export const DataEntry: React.FC = () => {
     setLoading(true);
     let query = supabase.from('production').select('*').order('year', { ascending: false }).order('month', { ascending: false });
     
-    if (!isAdmin && user?.plant) {
+    if (user?.role === 'Entry User' && user.plant && user.plant !== 'Global' && user.plant !== 'All') {
       query = query.eq('plant', user.plant);
     }
 
     const { data, error } = await query;
     if (!error && data) {
-      setRecords(data);
+      // Category restriction: Zero out restricted categories if not "All"
+      const processedData = data.map(record => {
+        const restricted = { ...record };
+        if (user?.category && user.category !== 'All') {
+          if (user.category === 'GRN') {
+            restricted.dispatched = 0;
+            restricted.waste = 0;
+          } else if (user.category === 'Dispatched') {
+            restricted.grn = 0;
+            restricted.waste = 0;
+          } else if (user.category === 'Waste') {
+            restricted.grn = 0;
+            restricted.dispatched = 0;
+          }
+        }
+        return restricted;
+      });
+      setRecords(processedData);
     }
     setLoading(false);
   };

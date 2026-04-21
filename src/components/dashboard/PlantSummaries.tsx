@@ -108,35 +108,47 @@ export const PlantSummaries: React.FC<PlantSummariesProps> = ({ records, year })
                   <thead className="bg-slate-50 uppercase font-bold text-[10px] text-slate-600">
                     <tr>
                       <th className="px-4 py-3 border-r">MONTH</th>
-                      <th className="px-4 py-3 border-r text-center">GRN (ROW YARN)</th>
-                      <th className="px-4 py-3 border-r text-center">DISPATCHED QTY</th>
-                      <th className="px-4 py-3 border-r text-center">WAST (EP+CP)</th>
-                      <th className="px-4 py-3 border-r bg-slate-100/50 text-center">GAP STOCK</th>
-                      <th className="px-4 py-3 text-center">PERCENTAGE %</th>
+                      <th className="px-4 py-3 border-r text-right">GRN (ROW YARN)</th>
+                      <th className="px-4 py-3 border-r text-right">DISPATCHED QTY</th>
+                      <th className="px-4 py-3 border-r text-right">WAST (EP+CP)</th>
+                      <th className="px-4 py-3 border-r bg-slate-100/50 text-right">GAP STOCK</th>
+                      <th className="px-4 py-3 text-right">PERCENTAGE %</th>
                     </tr>
                   </thead>
                   <tbody>
                     {dataByMonth.map((m) => (
-                      <tr key={m.month} className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors text-center text-slate-700">
+                      <tr key={m.month} className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors text-right text-slate-700">
                         <td className="px-4 py-2 border-r font-medium text-slate-500 text-left">{m.month}</td>
-                        <td className="px-4 py-2 border-r tabular-nums">{m.grn > 0 ? m.grn.toLocaleString() : '-'}</td>
-                        <td className="px-4 py-2 border-r tabular-nums">{m.dispatched > 0 ? m.dispatched.toLocaleString() : '-'}</td>
-                        <td className="px-4 py-2 border-r tabular-nums">{m.waste > 0 ? m.waste.toLocaleString() : '-'}</td>
+                        <td className="px-4 py-2 border-r tabular-nums">
+                          {m.grn > 0 ? m.grn.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-'}
+                        </td>
+                        <td className="px-4 py-2 border-r tabular-nums">
+                          {m.dispatched > 0 ? m.dispatched.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-'}
+                        </td>
+                        <td className="px-4 py-2 border-r tabular-nums">
+                          {m.waste > 0 ? m.waste.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-'}
+                        </td>
                         <td className={`px-4 py-2 border-r tabular-nums font-bold ${m.gapStock < 0 ? 'text-red-600' : 'text-slate-700'}`}>
-                          {m.gapStock !== 0 ? `(${Math.abs(m.gapStock).toLocaleString()})` : '-'}
+                          {m.gapStock !== 0 ? `(${Math.abs(m.gapStock).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })})` : '-'}
                         </td>
                         <td className="px-4 py-2 tabular-nums font-bold">
                           {m.percentage > 0 ? `${m.percentage.toFixed(2)}%` : '0.00%'}
                         </td>
                       </tr>
                     ))}
-                    <tr className="bg-slate-50 font-bold text-center text-slate-800">
+                    <tr className="bg-slate-50 font-bold text-right text-slate-800">
                       <td className="px-4 py-3 border-r text-left">TOTAL</td>
-                      <td className="px-4 py-3 border-r tabular-nums">{totals.grn.toLocaleString()}</td>
-                      <td className="px-4 py-3 border-r tabular-nums">{totals.dispatched.toLocaleString()}</td>
-                      <td className="px-4 py-3 border-r tabular-nums">{totals.waste.toLocaleString()}</td>
+                      <td className="px-4 py-3 border-r tabular-nums">
+                        {totals.grn.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </td>
+                      <td className="px-4 py-3 border-r tabular-nums">
+                        {totals.dispatched.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </td>
+                      <td className="px-4 py-3 border-r tabular-nums">
+                        {totals.waste.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </td>
                       <td className={`px-4 py-3 border-r tabular-nums ${totals.gapStock < 0 ? 'text-red-600' : 'text-slate-800'}`}>
-                        {`(${Math.abs(totals.gapStock).toLocaleString()})`}
+                        {`(${Math.abs(totals.gapStock).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })})`}
                       </td>
                       <td className="px-4 py-3 tabular-nums">{totalPercentage.toFixed(2)}%</td>
                     </tr>
@@ -158,35 +170,47 @@ export const PlantSummaries: React.FC<PlantSummariesProps> = ({ records, year })
             <thead className="bg-slate-100 uppercase font-bold text-[11px] text-slate-700">
               <tr>
                 <th className="px-6 py-4 border-r">MONTH</th>
-                <th className="px-6 py-4 border-r text-center">GRN (ROW YARN)</th>
-                <th className="px-6 py-4 border-r text-center">DISPATCHED QTY</th>
-                <th className="px-6 py-4 border-r text-center">WAST</th>
-                <th className="px-6 py-4 border-r bg-slate-200/50 text-center">GAP STOCK</th>
-                <th className="px-6 py-4 text-center">PERCENTAGE %</th>
+                <th className="px-6 py-4 border-r text-right">GRN (ROW YARN)</th>
+                <th className="px-6 py-4 border-r text-right">DISPATCHED QTY</th>
+                <th className="px-6 py-4 border-r text-right">WAST</th>
+                <th className="px-6 py-4 border-r bg-slate-200/50 text-right">GAP STOCK</th>
+                <th className="px-6 py-4 text-right">PERCENTAGE %</th>
               </tr>
             </thead>
             <tbody className="bg-white">
               {globalTotals.dataByMonth.map((m) => (
-                <tr key={m.month} className="border-b border-slate-100 hover:bg-yellow-50/30 transition-colors text-center font-medium">
+                <tr key={m.month} className="border-b border-slate-100 hover:bg-yellow-50/30 transition-colors text-right font-medium">
                   <td className="px-6 py-3 border-r font-semibold text-slate-600 text-left">{m.month}</td>
-                  <td className="px-6 py-3 border-r tabular-nums">{m.grn > 0 ? m.grn.toLocaleString() : '-'}</td>
-                  <td className="px-6 py-3 border-r tabular-nums">{m.dispatched > 0 ? m.dispatched.toLocaleString() : '-'}</td>
-                  <td className="px-6 py-3 border-r tabular-nums">{m.waste > 0 ? m.waste.toLocaleString() : '-'}</td>
+                  <td className="px-6 py-3 border-r tabular-nums">
+                    {m.grn > 0 ? m.grn.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-'}
+                  </td>
+                  <td className="px-6 py-3 border-r tabular-nums">
+                    {m.dispatched > 0 ? m.dispatched.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-'}
+                  </td>
+                  <td className="px-6 py-3 border-r tabular-nums">
+                    {m.waste > 0 ? m.waste.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-'}
+                  </td>
                   <td className={`px-6 py-3 border-r tabular-nums font-bold ${m.gapStock < 0 ? 'text-red-600' : 'text-slate-900'}`}>
-                    {m.gapStock !== 0 ? `(${Math.abs(m.gapStock).toLocaleString()})` : '-'}
+                    {m.gapStock !== 0 ? `(${Math.abs(m.gapStock).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })})` : '-'}
                   </td>
                   <td className="px-6 py-3 tabular-nums font-bold text-indigo-700">
                     {m.percentage > 0 ? `${m.percentage.toFixed(2)}%` : '0.00%'}
                   </td>
                 </tr>
               ))}
-              <tr className="bg-yellow-400 text-slate-900 font-extrabold shadow-inner text-center">
+              <tr className="bg-yellow-400 text-slate-900 font-extrabold shadow-inner text-right">
                 <td className="px-6 py-5 border-r text-left">CONSOLIDATED TOTAL</td>
-                <td className="px-6 py-5 border-r tabular-nums">{globalTotals.totals.grn.toLocaleString()}</td>
-                <td className="px-6 py-5 border-r tabular-nums">{globalTotals.totals.dispatched.toLocaleString()}</td>
-                <td className="px-6 py-5 border-r tabular-nums">{globalTotals.totals.waste.toLocaleString()}</td>
                 <td className="px-6 py-5 border-r tabular-nums">
-                  {`(${Math.abs(globalTotals.totals.gapStock).toLocaleString()})`}
+                  {globalTotals.totals.grn.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </td>
+                <td className="px-6 py-5 border-r tabular-nums">
+                  {globalTotals.totals.dispatched.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </td>
+                <td className="px-6 py-5 border-r tabular-nums">
+                  {globalTotals.totals.waste.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </td>
+                <td className="px-6 py-5 border-r tabular-nums">
+                  {`(${Math.abs(globalTotals.totals.gapStock).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })})`}
                 </td>
                 <td className="px-6 py-5 tabular-nums text-lg">{globalTotals.totalPercentage.toFixed(2)}%</td>
               </tr>

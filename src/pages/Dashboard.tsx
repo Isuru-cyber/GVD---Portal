@@ -24,8 +24,8 @@ export const Dashboard: React.FC = () => {
     setLoading(true);
     let query = supabase.from('production').select('*').order('year', { ascending: false }).order('month', { ascending: false });
     
-    // Plant restriction (for Entry Users)
-    if (user?.role === 'Entry User' && user.plant) {
+    // Plant restriction: Only filter if user has a specific plant (not 'Global' or 'All')
+    if (user?.role === 'Entry User' && user.plant && user.plant !== 'Global' && user.plant !== 'All') {
       query = query.eq('plant', user.plant);
     } else if (plantFilter !== 'All') {
       query = query.eq('plant', plantFilter);

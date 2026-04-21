@@ -101,6 +101,8 @@ export const RecordForm: React.FC<RecordFormProps> = ({ initialData, onSubmit, i
   const isDispatchedEditable = isAdmin || formData.category === 'Dispatched' || formData.category === 'All';
   const isWasteEditable = isAdmin || formData.category === 'Waste' || formData.category === 'All';
 
+  const canSelectPlant = isAdmin || user?.plant === 'Global' || user?.plant === 'All';
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {isChecking && (
@@ -148,13 +150,13 @@ export const RecordForm: React.FC<RecordFormProps> = ({ initialData, onSubmit, i
           onChange={handleChange}
           className="input mt-1 disabled:bg-slate-50"
           required
-          disabled={!isAdmin}
+          disabled={!canSelectPlant}
         >
           {PLANTS.map(p => (
             <option key={p} value={p}>{p}</option>
           ))}
         </select>
-        {!isAdmin && (
+        {!canSelectPlant && (
           <p className="text-[10px] text-slate-500 mt-1 flex items-center gap-1">
             <AlertCircle size={10} /> Plant is fixed to assigned location.
           </p>
@@ -201,13 +203,13 @@ export const RecordForm: React.FC<RecordFormProps> = ({ initialData, onSubmit, i
       </div>
 
       <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 mt-6">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center text-right">
           <span className="text-sm font-medium text-slate-600">Calculated Balance</span>
           <span className={`text-lg font-bold ${(formData.grn - formData.dispatched - formData.waste) < 0 ? 'text-red-600' : 'text-slate-800'}`}>
-            {(formData.grn - formData.dispatched - formData.waste).toLocaleString()}
+            {(formData.grn - formData.dispatched - formData.waste).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
         </div>
-        <div className="flex justify-between items-center mt-2">
+        <div className="flex justify-between items-center mt-2 text-right">
           <span className="text-sm font-medium text-slate-600">Utilization %</span>
           <span className="text-lg font-bold text-indigo-600">
             {formData.grn > 0 ? (((formData.dispatched + formData.waste) / formData.grn) * 100).toFixed(2) : '0.00'}%

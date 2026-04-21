@@ -20,7 +20,7 @@ export const RecordsDetails: React.FC = () => {
     setLoading(true);
     let query = supabase.from('production').select('*').order('year', { ascending: false }).order('month', { ascending: false });
     
-    if (user?.role === 'Entry User' && user.plant) {
+    if (user?.role === 'Entry User' && user.plant && user.plant !== 'Global' && user.plant !== 'All') {
       query = query.eq('plant', user.plant);
     } else if (plantFilter !== 'All') {
       query = query.eq('plant', plantFilter);

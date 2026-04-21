@@ -17,7 +17,7 @@ export const KPISection: React.FC<KPISectionProps> = ({ metrics }) => {
   const kpis = [
     {
       title: 'Total GRN',
-      value: metrics.totalGrn.toLocaleString(),
+      value: metrics.totalGrn.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
       icon: Package,
       color: 'text-indigo-600',
       bg: 'bg-indigo-50',
@@ -25,7 +25,7 @@ export const KPISection: React.FC<KPISectionProps> = ({ metrics }) => {
     },
     {
       title: 'Total Dispatched',
-      value: metrics.totalDispatched.toLocaleString(),
+      value: metrics.totalDispatched.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
       icon: TrendingUp,
       color: 'text-emerald-600',
       bg: 'bg-emerald-50',
@@ -33,7 +33,7 @@ export const KPISection: React.FC<KPISectionProps> = ({ metrics }) => {
     },
     {
       title: 'Total Waste',
-      value: metrics.totalWaste.toLocaleString(),
+      value: metrics.totalWaste.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
       icon: Trash2,
       color: 'text-rose-600',
       bg: 'bg-rose-50',
@@ -41,7 +41,7 @@ export const KPISection: React.FC<KPISectionProps> = ({ metrics }) => {
     },
     {
       title: 'Total Balance',
-      value: metrics.totalBalance.toLocaleString(),
+      value: metrics.totalBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
       icon: Wallet,
       color: 'text-amber-600',
       bg: 'bg-amber-50',
@@ -67,7 +67,7 @@ export const KPISection: React.FC<KPISectionProps> = ({ metrics }) => {
           transition={{ delay: index * 0.1 }}
           className={`bg-white p-6 rounded-2xl border ${kpi.border} shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow`}
         >
-          <div className="relative z-10">
+          <div className="relative z-10 flex flex-col items-center text-center">
             <div className={`w-12 h-12 ${kpi.bg} ${kpi.color} rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110`}>
               <kpi.icon size={24} />
             </div>

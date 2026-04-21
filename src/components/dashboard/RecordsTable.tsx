@@ -30,11 +30,11 @@ export const RecordsTable: React.FC<RecordsTableProps> = ({ records, onEdit, onD
           <tr>
             <th>Month / Year</th>
             <th>Plant</th>
-            <th>GRN</th>
-            <th>Dispatched</th>
-            <th>Waste</th>
-            <th>Gap Stock</th>
-            <th>Percentage %</th>
+            <th className="text-right">GRN</th>
+            <th className="text-right">Dispatched</th>
+            <th className="text-right">Waste</th>
+            <th className="text-right">Gap Stock</th>
+            <th className="text-right">Percentage %</th>
             {showExtended && (
               <>
                 <th>Created By</th>
@@ -72,13 +72,19 @@ export const RecordsTable: React.FC<RecordsTableProps> = ({ records, onEdit, onD
                       {record.plant}
                     </span>
                   </td>
-                  <td className="tabular-nums">{record.grn.toLocaleString()}</td>
-                  <td className="tabular-nums">{record.dispatched.toLocaleString()}</td>
-                  <td className="tabular-nums">{record.waste.toLocaleString()}</td>
-                  <td className={`tabular-nums font-bold ${gapStock < 0 ? 'text-rose-600' : 'text-slate-700'}`}>
-                    {gapStock.toLocaleString()}
+                  <td className="tabular-nums text-right">
+                    {record.grn.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </td>
-                  <td>
+                  <td className="tabular-nums text-right">
+                    {record.dispatched.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </td>
+                  <td className="tabular-nums text-right">
+                    {record.waste.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </td>
+                  <td className={`tabular-nums font-bold text-right ${gapStock < 0 ? 'text-rose-600' : 'text-slate-700'}`}>
+                    {gapStock.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </td>
+                  <td className="text-right">
                     <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${getUtilColor(percentage)}`}>
                       {percentage.toFixed(2)}%
                     </span>
