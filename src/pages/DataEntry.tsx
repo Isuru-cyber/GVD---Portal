@@ -137,18 +137,6 @@ export const DataEntry: React.FC = () => {
         </button>
       </div>
 
-      <div className="card border-dashed border-2 border-slate-200 bg-slate-50/50 p-8 text-center">
-        <div className="max-w-md mx-auto">
-          <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-indigo-500 mx-auto mb-4 shadow-sm">
-            <FileText size={32} />
-          </div>
-          <h3 className="text-lg font-bold text-slate-800">Ready to record data?</h3>
-          <p className="text-sm text-slate-500 mt-2">
-            {!isAdmin ? `You are authorized to enter data for ${user?.plant} covering ${user?.category} categories.` : 'As an administrator, you have full access to all plants and categories.'}
-          </p>
-        </div>
-      </div>
-
       <div className="card">
         <div className="p-6 border-b border-slate-100 flex items-center justify-between">
           <h3 className="text-lg font-bold text-slate-800">Your Recent Records</h3>

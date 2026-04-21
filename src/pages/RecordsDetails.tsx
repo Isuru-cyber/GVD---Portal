@@ -63,6 +63,39 @@ export const RecordsDetails: React.FC = () => {
     return Array.from(years).sort((a: any, b: any) => b - a);
   }, [records]);
 
+  const handleExportCSV = () => {
+    if (records.length === 0) return;
+    
+    // Using simple CSV generation
+    const headers = ['Month', 'Year', 'Plant', 'GRN', 'Dispatched', 'Waste', 'Gap Stock', 'Percentage %', 'Created By', 'Created At'];
+    const csvData = records.map(r => {
+      const gapStock = r.grn - r.dispatched - r.waste;
+      const percentage = r.grn > 0 ? ((r.dispatched + r.waste) / r.grn) * 100 : 0;
+      return [
+        r.month,
+        r.year,
+        r.plant,
+        r.grn,
+        r.dispatched,
+        r.waste,
+        gapStock,
+        `${percentage.toFixed(2)}%`,
+        r.created_by,
+        new Date(r.created_at).toISOString()
+      ].join(',');
+    });
+
+    const csvString = [headers.join(','), ...csvData].join('\n');
+    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `GVD_Full_Records_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -112,13 +145,16 @@ export const RecordsDetails: React.FC = () => {
 
       <div className="card">
         <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-          <h3 className="text-lg font-bold text-slate-800">Full Records History</h3>
-          <button className="text-sm font-semibold text-indigo-600 hover:text-indigo-700 flex items-center gap-1">
+          <h3 className="text-lg font-bold text-slate-800">Your Recent Records</h3>
+          <button 
+            onClick={handleExportCSV}
+            className="text-sm font-semibold text-indigo-600 hover:text-indigo-700 flex items-center gap-1"
+          >
             <Download size={16} />
-            Export Full Log
+            Export Full Log (CSV)
           </button>
         </div>
-        <RecordsTable records={records} />
+        <RecordsTable records={records} showExtended={true} />
       </div>
     </div>
   );

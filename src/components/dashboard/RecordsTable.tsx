@@ -7,9 +7,10 @@ interface RecordsTableProps {
   records: ProductionRecord[];
   onEdit?: (record: ProductionRecord) => void;
   onDelete?: (id: string) => void;
+  showExtended?: boolean;
 }
 
-export const RecordsTable: React.FC<RecordsTableProps> = ({ records, onEdit, onDelete }) => {
+export const RecordsTable: React.FC<RecordsTableProps> = ({ records, onEdit, onDelete, showExtended = false }) => {
   const { user } = useAuth();
   const isAdmin = user?.role === 'Admin';
 
@@ -20,6 +21,7 @@ export const RecordsTable: React.FC<RecordsTableProps> = ({ records, onEdit, onD
   };
 
   const showActions = !!onEdit || !!onDelete;
+  const colCount = (showActions ? 8 : 7) + (showExtended ? 2 : 0);
 
   return (
     <div className="table-container mt-8 shadow-sm">
@@ -33,13 +35,19 @@ export const RecordsTable: React.FC<RecordsTableProps> = ({ records, onEdit, onD
             <th>Waste</th>
             <th>Gap Stock</th>
             <th>Percentage %</th>
+            {showExtended && (
+              <>
+                <th>Created By</th>
+                <th>Date & Time</th>
+              </>
+            )}
             {showActions && <th className="text-right">Actions</th>}
           </tr>
         </thead>
         <tbody>
           {records.length === 0 ? (
             <tr>
-              <td colSpan={showActions ? 8 : 7} className="text-center py-12 text-slate-400 italic">
+              <td colSpan={colCount} className="text-center py-12 text-slate-400 italic">
                 No records found.
               </td>
             </tr>
@@ -47,6 +55,7 @@ export const RecordsTable: React.FC<RecordsTableProps> = ({ records, onEdit, onD
             records.map((record) => {
               const gapStock = record.grn - record.dispatched - record.waste;
               const percentage = record.grn > 0 ? ((record.dispatched + record.waste) / record.grn) * 100 : 0;
+              const createdAt = new Date(record.created_at);
               
               return (
                 <tr key={record.id}>
@@ -69,6 +78,14 @@ export const RecordsTable: React.FC<RecordsTableProps> = ({ records, onEdit, onD
                       {percentage.toFixed(1)}%
                     </span>
                   </td>
+                  {showExtended && (
+                    <>
+                      <td className="text-xs text-slate-500 capitalize">{record.created_by}</td>
+                      <td className="text-[10px] text-slate-400 tabular-nums">
+                        {createdAt.toLocaleDateString()} {createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </td>
+                    </>
+                  )}
                   {showActions && (
                     <td className="text-right">
                       <div className="flex items-center justify-end gap-2">

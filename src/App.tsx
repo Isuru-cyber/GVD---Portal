@@ -62,8 +62,8 @@ const AppContent: React.FC = () => {
           </motion.div>
         </main>
       </div>
-      <footer className="ml-64 py-6 px-8 border-t border-slate-200 text-center text-slate-400 text-[10px] font-bold uppercase tracking-widest bg-white">
-        GVD Opex Management System &copy; 2026 | Proprietary & Confidential
+      <footer className="ml-64 py-6 px-8 border-t border-slate-200 text-center text-slate-400 text-[11px] font-semibold tracking-wide bg-white">
+        GVD Management System &copy; 2026 STR Commercial Department
       </footer>
     </div>
   );
