@@ -105,7 +105,7 @@ export const Dashboard: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-800">Production Dashboard</h2>
+          <h2 className="text-2xl font-bold text-slate-800"> Dashboard</h2>
           <p className="text-sm text-slate-500">Real-time plant performance overview</p>
         </div>
 
