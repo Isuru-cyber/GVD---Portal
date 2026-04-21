@@ -75,7 +75,7 @@ export const RecordsTable: React.FC<RecordsTableProps> = ({ records, onEdit, onD
                   </td>
                   <td>
                     <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${getUtilColor(percentage)}`}>
-                      {percentage.toFixed(1)}%
+                      {percentage.toFixed(2)}%
                     </span>
                   </td>
                   {showExtended && (

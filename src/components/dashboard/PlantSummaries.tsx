@@ -126,7 +126,7 @@ export const PlantSummaries: React.FC<PlantSummariesProps> = ({ records, year })
                           {m.gapStock !== 0 ? `(${Math.abs(m.gapStock).toLocaleString()})` : '-'}
                         </td>
                         <td className="px-4 py-2 tabular-nums font-bold">
-                          {m.percentage > 0 ? `${m.percentage.toFixed(0)}%` : '0%'}
+                          {m.percentage > 0 ? `${m.percentage.toFixed(2)}%` : '0.00%'}
                         </td>
                       </tr>
                     ))}
@@ -138,7 +138,7 @@ export const PlantSummaries: React.FC<PlantSummariesProps> = ({ records, year })
                       <td className={`px-4 py-3 border-r tabular-nums ${totals.gapStock < 0 ? 'text-red-600' : 'text-slate-800'}`}>
                         {`(${Math.abs(totals.gapStock).toLocaleString()})`}
                       </td>
-                      <td className="px-4 py-3 tabular-nums">{totalPercentage.toFixed(0)}%</td>
+                      <td className="px-4 py-3 tabular-nums">{totalPercentage.toFixed(2)}%</td>
                     </tr>
                   </tbody>
                 </table>
@@ -176,7 +176,7 @@ export const PlantSummaries: React.FC<PlantSummariesProps> = ({ records, year })
                     {m.gapStock !== 0 ? `(${Math.abs(m.gapStock).toLocaleString()})` : '-'}
                   </td>
                   <td className="px-6 py-3 tabular-nums font-bold text-indigo-700">
-                    {m.percentage > 0 ? `${m.percentage.toFixed(0)}%` : '0%'}
+                    {m.percentage > 0 ? `${m.percentage.toFixed(2)}%` : '0.00%'}
                   </td>
                 </tr>
               ))}
@@ -188,7 +188,7 @@ export const PlantSummaries: React.FC<PlantSummariesProps> = ({ records, year })
                 <td className="px-6 py-5 border-r tabular-nums">
                   {`(${Math.abs(globalTotals.totals.gapStock).toLocaleString()})`}
                 </td>
-                <td className="px-6 py-5 tabular-nums text-lg">{globalTotals.totalPercentage.toFixed(0)}%</td>
+                <td className="px-6 py-5 tabular-nums text-lg">{globalTotals.totalPercentage.toFixed(2)}%</td>
               </tr>
             </tbody>
           </table>

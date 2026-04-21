@@ -49,7 +49,7 @@ export const KPISection: React.FC<KPISectionProps> = ({ metrics }) => {
     },
     {
       title: 'Utilization %',
-      value: `${metrics.overallUtilization.toFixed(1)}%`,
+      value: `${metrics.overallUtilization.toFixed(2)}%`,
       icon: Activity,
       color: 'text-violet-600',
       bg: 'bg-violet-50',

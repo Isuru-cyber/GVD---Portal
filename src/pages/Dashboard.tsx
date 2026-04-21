@@ -78,7 +78,7 @@ export const Dashboard: React.FC = () => {
     const totalDispatched = records.reduce((sum, r) => sum + r.dispatched, 0);
     const totalWaste = records.reduce((sum, r) => sum + r.waste, 0);
     const totalBalance = totalGrn - totalDispatched - totalWaste;
-    const overallUtilization = totalGrn > 0 ? (totalDispatched / totalGrn) * 100 : 0;
+    const overallUtilization = totalGrn > 0 ? ((totalDispatched + totalWaste) / totalGrn) * 100 : 0;
 
     return {
       totalGrn,
